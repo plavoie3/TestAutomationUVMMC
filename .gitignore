@@ -1,5 +1,5 @@
 flash_config.txt
-/Reports
-/Screenshots
+Reports/
+Screenshots/
 README.md
 geckodriver.log
