@@ -4,3 +4,4 @@ Screenshots/
 README.md
 geckodriver.log
 *.pyc
+.idea/
