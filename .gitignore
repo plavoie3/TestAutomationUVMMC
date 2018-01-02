@@ -7,3 +7,4 @@ geckodriver.log
 .idea/
 build/
 dist/
+geckodriver.log
