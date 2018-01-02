@@ -6,19 +6,19 @@ from teletracking import Teletracking_TestCase
 import smtplib
 from email.mime.application import MIMEApplication
 import Conf_Reader
-
+import codecs
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-cur_date = time.strftime("%d_%m_%Y")
+cur_date = time.strftime("%m_%d_%Y")
 cur_time = time.strftime("%I:%M:%S")
 cur_time2 = time.strftime("%I_%M_%S")
 date_time = cur_date + " " + cur_time
 date_time2 = cur_date + " " + cur_time2
 
 dir = os.getcwd()
-file = dir + "\Reports\Test_Report_Flash_" + date_time2 + ".html"
+file = "H:\\MyDocuments\\PyCharmProjects\\Automation\\\Reports\Test_Report_Flash_" + date_time2 + ".html"
 
 outfile = open(file, "w")
 title = "Flash Testing Report " + date_time
@@ -39,17 +39,21 @@ runner.run(run_suite)
 
 outfile.close()
 
+f=codecs.open(file, 'r')
+for line in f:
+    if "<p class='attribute'><strong>Status:</strong>" in line:
+        status = line;
+        break
 
 recipients = ['philip.lavoie@uvmhealth.org']
 email_list = [elem.strip().split(',') for elem in recipients]
-
-# copyfile(outfile,)
 
 
 msg = MIMEMultipart('alternative')
 msg['Subject'] = title
 msg['From'] = 'philip.lavoie@uvmhealth.org'
-msg['Reply-to'] = 'QA & Testing Department'
+msg['Reply-to'] = 'philip.lavoie@uvmhealth.org'
+msg['Cc'] = 'philip.lavoie@uvmhealth.org'
 
 msg.preamble = 'Multipart massage.\n'
 
@@ -58,7 +62,7 @@ html = """\
   <head>
     <meta name="viewport" content="width=device-width">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Simple Transactional Email</title>
+    <title>Automated Test Results</title>
     <style>
     /* -------------------------------------
         INLINED WITH htmlemail.io/inline
@@ -143,7 +147,7 @@ html = """\
   <body class="" style="background-color: #f6f6f6; font-family: sans-serif; -webkit-font-smoothing: antialiased; font-size: 14px; line-height: 1.4; margin: 0; padding: 0; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
     <table border="0" cellpadding="0" cellspacing="0" class="body" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background-color: #f6f6f6;">
       <tr>
-        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;">&nbsp;</td>
+        <!--<td style="font-family: sans-serif; font-size: 14px; vertical-align: top;">&nbsp;</td>-->
         <td class="container" style="font-family: sans-serif; font-size: 14px; vertical-align: top; display: block; Margin: 0 auto; max-width: 580px; padding: 10px; width: 580px;">
           <div class="content" style="box-sizing: border-box; display: block; Margin: 0 auto; max-width: 580px; padding: 10px;">
 
@@ -158,6 +162,7 @@ html = """\
                       <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;">
                         <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Hello,</p>
                         <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Your automated tests are complete.</p>
+                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">""" + status + """</p>
                         <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Please view the attached file in a browser for full test results.</p>
                         <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Thank you,</p>
                         <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">QA & Testing Department</p>
