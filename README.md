@@ -7,6 +7,7 @@ Core files used to build and freeze automated test suite and a runner w/ HTML re
 * [Conf_Reader.py](https://github.uvmhealth.org/m306517/Automation/blob/master/Conf_Reader.py) - Used to read in test parameters from configuration .txt file (to avoid passwords being written into code). 
   Note: the repo does not include the configuration file. This will need to be created and managed. Keep in same directory as all other files. See below for format...
 
+Ex: config.txt
 ```
 
 *** Configuration file for test parameters ***
