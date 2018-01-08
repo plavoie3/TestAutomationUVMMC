@@ -72,13 +72,13 @@ Core files used to build and freeze automated test suite and a runner w/ HTML re
     ```
     
     GUI asks user to enter test report output location and then run tests.
-    Once run, the console is used to provide feedback. GUI displays status of tests once completed.
+    Once run, the console is used to provide feedback on tests as they run, time elapsed when complete. 
+    GUI displays result pass/fail totals of tests once completed.
     Closing GUI ends program (closes console window too)
     
-    Email with report is sent to preset email in this code:
+    Email with full HTML report is saved to specified location and sent to preset email in this code:
     
   ```
-    
   f = codecs.open(self.label_text.get() + "/Test_Report_Flash_" + date_time2 + ".html", 'r')
   for line in f:
     if "<p class='attribute'><strong>Status:</strong>" in line:
@@ -133,5 +133,20 @@ Core files used to build and freeze automated test suite and a runner w/ HTML re
 
    self.text_running = status + "\n Tests complete, full report has been emailed"
    self.label_text_running.set(self.text_running)
-           
+   
+   
+* [TestRunner_flash.spec](https://github.uvmhealth.org/m306517/Automation/blob/master/TestRunner_flash.spec) - Specification file for test runner executable (include necessary data files such as configuration.txt, icons, other desired settings)
+
+    In cmd, navigate to location of the file and use this command:
+    
+    ```
+    pyinstaller --onedir TestRunner_flash.spec
+    ```
+    
+    This will create a dist and build folder in the directory of the spec file
+    In the dist folder, there will be a folder with the name of the TestRunner, within this folder is where the exe will be.
+     
+    Zip the TestRunner folder, send to client, have them extract, create shortcut for exe. Double click to run.
+
+ 
     
