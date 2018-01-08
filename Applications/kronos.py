@@ -1,23 +1,19 @@
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.action_chains import ActionChains
 import os
-import Conf_Reader
-import unittest
-import base64
 import time
+import unittest
 from __builtin__ import classmethod
+
+from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support.ui import Select
-from selenium.common.exceptions import NoSuchElementException
+
+import Conf_Reader
 
 
 ## Test Class
 
 class Kronos_TestCase(unittest.TestCase):
-
 
 ## Test Class setup
 
@@ -76,9 +72,9 @@ class Kronos_TestCase(unittest.TestCase):
         username = WebDriverWait(self.driver, 20).until(EC.visibility_of_element_located(
             (By.ID, "username")))
 
-        username.send_keys("m306517")
+        username.send_keys(user)
 
-        self.driver.find_element_by_id("passInput").send_keys("Ihaverecon4life")
+        self.driver.find_element_by_id("passInput").send_keys(password)
 
         self.driver.find_element_by_id("loginSubmit").click()
 
@@ -100,7 +96,7 @@ class Kronos_TestCase(unittest.TestCase):
             cur_time = time.strftime("%I_%M_%S")
             date_time = cur_date + " " + cur_time
 
-        self.driver.save_screenshot("H:\\MyDocuments\\Automated_Tests\\Screenshots\\Kronos\\kronos_signin" + date_time + ".png")
+        self.driver.save_screenshot(os.getcwd() + "/kronos_signin" + date_time + ".png")
 
         if test_pass == False:
             print("Timed out trying to confirm page name / Could not confirm flash loaded")

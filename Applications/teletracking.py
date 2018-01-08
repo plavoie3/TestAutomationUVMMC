@@ -1,18 +1,10 @@
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.action_chains import ActionChains
-import os
-import Conf_Reader
 import unittest
-import base64
 import time
 from __builtin__ import classmethod
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support.ui import Select
-from selenium.common.exceptions import NoSuchElementException
-
 
 # ## Check download folder size (# of files) before any files are downloaded by test ##
 #

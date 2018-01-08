@@ -1,19 +1,13 @@
-import unittest
-import os, time
-import HTMLTestRunner
-from kronos import Kronos_TestCase
-from teletracking import Teletracking_TestCase
-import smtplib
-from email.mime.application import MIMEApplication
-import Conf_Reader
-import codecs
-from tkinter.filedialog import askdirectory
-from tkinter import Tk, Label, Button
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from tkinter import *
-import threading
+print ("Compiling required modules...")
 
+import time
+
+import tkinter as tk
+from tkinter.filedialog import askdirectory
+
+print ("Done" + "\n")
+
+print ("Wait for GUI window..." + "\n")
 
 cur_date = time.strftime("%m_%d_%Y")
 cur_time = time.strftime("%I:%M:%S")
@@ -21,8 +15,8 @@ cur_time2 = time.strftime("%I_%M_%S")
 date_time = cur_date + " " + cur_time
 date_time2 = cur_date + " " + cur_time2
 
-
 class GUI:
+
     def __init__(self, master):
 
         self.master = master
@@ -31,54 +25,69 @@ class GUI:
 
         # Welcome label
 
-        self.label_welcome = Label(master, text="Welcome, select a destination for test reports to be saved to below, then click 'Run' to start tests")
+        self.label_welcome = tk.Label(master, pady=10, padx=7, text="Welcome, select a destination for test reports to be saved to below, then click 'Run' to start tests")
         self.label_welcome.pack()
+
+        # Separator
+
+        self.separator = tk.Frame(height=2, bd=1, relief=tk.SUNKEN)
+        self.separator.pack(fill=tk.X, padx=5, pady=5)
 
         # Leading label
 
-        self.label_leading = Label(master, text="Test reports will be saved to: ")
+        self.label_leading = tk.Label(master, text="Test reports will be saved to: ")
         self.label_leading.pack()
 
         # Destination label
 
         self.text = "No destination selected"
-        self.label_text = StringVar()
+        self.label_text = tk.StringVar()
         self.label_text.set(self.text)
 
-        self.label_destination = Label(master, textvariable=self.label_text)
+        self.label_destination = tk.Label(master, textvariable=self.label_text)
         self.label_destination.pack()
+
+        # Separator
+
+        self.separator = tk.Frame(height=2, bd=1, relief=tk.SUNKEN)
+        self.separator.pack(fill=tk.X, padx=5, pady=5)
 
         # Button
 
-        self.destination_button = Button(master, text="Select destination", command=self.destination)
+        self.destination_button = tk.Button(master, pady=10, padx=7, text="Select destination", command=self.destination)
         self.destination_button.pack()
+
+        # Separator
+
+        self.separator = tk.Frame(height=2, bd=1, relief=tk.SUNKEN)
+        self.separator.pack(fill=tk.X, padx=5, pady=5)
 
         # Warning label
 
         self.text_warning = ""
-        self.label_text_warning = StringVar()
+        self.label_text_warning = tk.StringVar()
         self.label_text_warning.set(self.text_warning)
 
-        self.label_warning = Label(master, textvariable=self.label_text_warning)
+        self.label_warning = tk.Label(master, pady=10, padx=7, textvariable=self.label_text_warning)
         self.label_warning.pack()
 
-        # Button
+        # Run Button
 
-        self.run_button = Button(master, text="Run", command=self.run)
+        self.run_button = tk.Button(master, pady=10, padx=7, text="Run", command=self.run)
         self.run_button.pack()
 
         # Running label
 
         self.text_running = ""
-        self.label_text_running = StringVar()
+        self.label_text_running = tk.StringVar()
         self.label_text_running.set(self.text_running)
 
-        self.label_running = Label(master, textvariable=self.label_text_running)
+        self.label_running = tk.Label(master, textvariable=self.label_text_running)
         self.label_running.pack()
 
         # Close Button
 
-        self.close_button = Button(master, text="Close", command=master.quit)
+        self.close_button = tk.Button(master, pady=10, padx=7, text="Close", command=master.quit)
         self.close_button.pack()
 
 
@@ -90,7 +99,16 @@ class GUI:
 
     def run(self):
 
-        print self.label_text.get()
+        recipients = ['philip.lavoie@uvmhealth.org']
+
+        print "Running tests..."
+
+        print "Report will be saved to: \n" + self.label_text.get() + "\n"
+        print "Report will be emailed to: "
+
+        for email in recipients:
+            print email + "\n"
+
 
         if self.label_text.get() == "No destination selected":
             self.text_warning = "Destination must be selected before tests can be run"
@@ -104,6 +122,11 @@ class GUI:
             self.label_welcome.destroy()
             self.label_leading.destroy()
             self.run_button.destroy()
+            self.separator.destroy()
+
+            from Applications.kronos import Kronos_TestCase
+            from Applications.teletracking import Teletracking_TestCase
+            import unittest, HTMLTestRunner
 
             outfile = open(self.label_text.get() + "/Test_Report_Flash_" + date_time2 + ".html", "w")
             title = "Flash Testing Report " + date_time
@@ -116,10 +139,12 @@ class GUI:
             runner = HTMLTestRunner.HTMLTestRunner(
                              stream=outfile,
                              title= title ,
+                             verbosity= 2 ,
                              description='Flash testing report for Kronos and Teletracking Dashboard...'
                              )
 
             # run the suite using HTMLTestRunner
+
             runner.run(run_suite)
 
             self.text_running = "running"
@@ -127,9 +152,14 @@ class GUI:
 
             ########################################################################################################################
 
-            print("Running suite...")
-
             outfile.close()
+
+            import smtplib
+            import codecs
+            from email.mime.application import MIMEApplication
+            from email.mime.multipart import MIMEMultipart
+            from email.mime.text import MIMEText
+            import Conf_Reader
 
             f = codecs.open(self.label_text.get() + "/Test_Report_Flash_" + date_time2 + ".html", 'r')
             for line in f:
@@ -137,9 +167,7 @@ class GUI:
                     status = line;
                     break
 
-            recipients = ['philip.lavoie@uvmhealth.org']
             email_list = [elem.strip().split(',') for elem in recipients]
-
 
             msg = MIMEMultipart('alternative')
             msg['Subject'] = title
@@ -308,10 +336,10 @@ class GUI:
               </body>
             </html>
             
-            
-            
-            
+                  
             """
+
+            import os
 
             part = MIMEText(html, 'html')
 
@@ -339,7 +367,6 @@ class GUI:
             self.text_running = status + "\n Tests complete, full report has been emailed"
             self.label_text_running.set(self.text_running)
 
-
-root = Tk()
+root = tk.Tk()
 my_gui = GUI(root)
 root.mainloop()
