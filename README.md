@@ -53,8 +53,8 @@ Core files used to build and freeze automated test suite and a runner w/ HTML re
     outfile = open(self.label_text.get() + "/Test_Report_Name_" + date_time2 + ".html", "w")
     title = "Flash Testing Report " + date_time
         
-    applicationName_suite = unittest.TestLoader().loadTestsFromTestCase(applicationName_TestCaseName)
-    applicationName_suite = unittest.TestLoader().loadTestsFromTestCase(application2Name_TestCaseName)
+    applicationName_tests = unittest.TestLoader().loadTestsFromTestCase(applicationName_TestCaseName)
+    applicationName2_tests = unittest.TestLoader().loadTestsFromTestCase(application2Name_TestCaseName)
     .
     .
     ...etc.
@@ -70,8 +70,68 @@ Core files used to build and freeze automated test suite and a runner w/ HTML re
               
     runner.run(run_suite)
     ```
+    
+    GUI asks user to enter test report output location and then run tests.
+    Once run, the console is used to provide feedback. GUI displays status of tests once completed.
+    Closing GUI ends program (closes console window too)
+    
+    Email with report is sent to preset email in this code:
+    
+  ```
+    
+  f = codecs.open(self.label_text.get() + "/Test_Report_Flash_" + date_time2 + ".html", 'r')
+  for line in f:
+    if "<p class='attribute'><strong>Status:</strong>" in line:
+        status = line;
+        break
 
-        
+  email_list = [elem.strip().split(',') for elem in recipients]
 
+  msg = MIMEMultipart('alternative')
+  msg['Subject'] = title
+  msg['From'] = 'philip.lavoie@uvmhealth.org'
+  msg['Reply-to'] = 'philip.lavoie@uvmhealth.org'
+  msg['Cc'] = 'philip.lavoie@uvmhealth.org'
 
+  msg.preamble = 'Multipart massage.\n'
 
+  #############################################################
+
+  html = """\
+  <html>
+            
+  [EMAIL BODY]
+            
+  </html>
+               
+  """
+
+  import os
+
+  part = MIMEText(html, 'html')
+
+  msg.attach(part)
+
+  part = MIMEApplication(open(self.label_text.get() + "/Test_Report_Flash_" + date_time2 + ".html", "rb").read())
+  part.add_header('Content-Disposition', 'attachment', filename=title+".html")
+  msg.attach(part)
+
+  server = smtplib.SMTP("email.fahc.org", 25)
+  server.ehlo()
+  server.starttls()
+
+   credentials_file = os.getcwd() + '\\flash_config.txt'
+   password = Conf_Reader.get_value(credentials_file, 'KRONOS_LOGIN_PASSWORD')
+
+   server.login("m306517", password)
+
+   server.sendmail(msg['From'], email_list, msg.as_string())
+
+   status = status.replace("<p class='attribute'><strong>", "")
+   status = status.replace("</strong>", "")
+   status = status.replace("</p>", "")
+
+   self.text_running = status + "\n Tests complete, full report has been emailed"
+   self.label_text_running.set(self.text_running)
+           
+    

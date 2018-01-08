@@ -131,10 +131,10 @@ class GUI:
             outfile = open(self.label_text.get() + "/Test_Report_Flash_" + date_time2 + ".html", "w")
             title = "Flash Testing Report " + date_time
 
-            kronos_suite = unittest.TestLoader().loadTestsFromTestCase(Kronos_TestCase)
-            teletracking_suite = unittest.TestLoader().loadTestsFromTestCase(Teletracking_TestCase)
+            kronos_tests = unittest.TestLoader().loadTestsFromTestCase(Kronos_TestCase)
+            teletracking_tests = unittest.TestLoader().loadTestsFromTestCase(Teletracking_TestCase)
 
-            run_suite = unittest.TestSuite([teletracking_suite, kronos_suite])
+            run_suite = unittest.TestSuite([teletracking_tests, kronos_tests])
 
             runner = HTMLTestRunner.HTMLTestRunner(
                              stream=outfile,
