@@ -1,19 +1,18 @@
 print ("Compiling required modules...")
 
 import time
-
 import tkinter as tk
 from tkinter.filedialog import askdirectory
 
 print ("Done" + "\n")
-
-print ("Wait for GUI window..." + "\n")
 
 cur_date = time.strftime("%m_%d_%Y")
 cur_time = time.strftime("%I:%M:%S")
 cur_time2 = time.strftime("%I_%M_%S")
 date_time = cur_date + " " + cur_time
 date_time2 = cur_date + " " + cur_time2
+
+print ("Wait for GUI window..." + "\n")
 
 class GUI:
 
@@ -25,13 +24,13 @@ class GUI:
 
         # Welcome label
 
-        self.label_welcome = tk.Label(master, pady=10, padx=7, text="Welcome, select a destination for test reports to be saved to below, then click 'Run' to start tests")
+        self.label_welcome = tk.Label(master, pady=10, padx=7, text="Welcome, select a location for test reports to be saved to below, then click 'Run' to start tests")
         self.label_welcome.pack()
 
         # Separator
 
-        self.separator = tk.Frame(height=2, bd=1, relief=tk.SUNKEN)
-        self.separator.pack(fill=tk.X, padx=5, pady=5)
+        self.separator1 = tk.Frame(height=2, bd=1, relief=tk.SUNKEN)
+        self.separator1.pack(fill=tk.X, padx=5, pady=5)
 
         # Leading label
 
@@ -40,27 +39,22 @@ class GUI:
 
         # Destination label
 
-        self.text = "No destination selected"
+        self.text = "Output location not selected"
         self.label_text = tk.StringVar()
         self.label_text.set(self.text)
 
-        self.label_destination = tk.Label(master, textvariable=self.label_text)
+        self.label_destination = tk.Label(master, pady=10, padx=7, textvariable=self.label_text)
         self.label_destination.pack()
-
-        # Separator
-
-        self.separator = tk.Frame(height=2, bd=1, relief=tk.SUNKEN)
-        self.separator.pack(fill=tk.X, padx=5, pady=5)
 
         # Button
 
-        self.destination_button = tk.Button(master, pady=10, padx=7, text="Select destination", command=self.destination)
+        self.destination_button = tk.Button(master, pady=10, padx=7, text="Select location", command=self.destination)
         self.destination_button.pack()
 
         # Separator
 
-        self.separator = tk.Frame(height=2, bd=1, relief=tk.SUNKEN)
-        self.separator.pack(fill=tk.X, padx=5, pady=5)
+        self.separator2 = tk.Frame(height=2, bd=1, relief=tk.SUNKEN)
+        self.separator2.pack(fill=tk.X, padx=10, pady=10)
 
         # Warning label
 
@@ -83,46 +77,61 @@ class GUI:
         self.label_text_running.set(self.text_running)
 
         self.label_running = tk.Label(master, textvariable=self.label_text_running)
+
         self.label_running.pack()
+
+
+        # Switch label
+
+        self.label_switch = tk.Label(master, pady=10, padx=7, text="After running, switch back to console window for live test results")
+        self.label_switch.pack()
 
         # Close Button
 
         self.close_button = tk.Button(master, pady=10, padx=7, text="Close", command=master.quit)
         self.close_button.pack()
 
+        print ("GUI loaded, switch to that window..." + "\n")
 
     def destination(self):
 
         self.text = askdirectory()
         self.label_text.set(self.text)
 
-
     def run(self):
 
         recipients = ['philip.lavoie@uvmhealth.org']
 
-        print "Running tests..."
-
-        print "Report will be saved to: \n" + self.label_text.get() + "\n"
-        print "Report will be emailed to: "
-
-        for email in recipients:
-            print email + "\n"
-
-
-        if self.label_text.get() == "No destination selected":
-            self.text_warning = "Destination must be selected before tests can be run"
+        if self.label_text.get() == "Output location not selected":
+            self.text_warning = "^ Output location must be selected before tests can be run"
             self.label_text_warning.set(self.text_warning)
             return
 
         else:
+            print "Running tests...\n"
+
+            print "Report will be saved to: \n" + self.label_text.get() + "\n"
+            print "Report will be emailed to: "
+
+            for email in recipients:
+                print email
+
+            print "\n"
+
+            print "To terminate program, close this window or press Ctrl-C \n"
+
+            print "Live test statuses: \n"
+
+          # print "Click the 'Close' button or
             self.destination_button.destroy()
             self.label_destination.destroy()
-            self.label_text_warning
+            self.label_warning.destroy()
             self.label_welcome.destroy()
             self.label_leading.destroy()
             self.run_button.destroy()
-            self.separator.destroy()
+            self.separator1.destroy()
+            self.separator2.destroy()
+            self.label_switch.destroy()
 
             from Applications.kronos import Kronos_TestCase
             from Applications.teletracking import Teletracking_TestCase
@@ -146,9 +155,6 @@ class GUI:
             # run the suite using HTMLTestRunner
 
             runner.run(run_suite)
-
-            self.text_running = "running"
-            self.label_text_running.set(self.text_running)
 
             ########################################################################################################################
 
@@ -177,7 +183,7 @@ class GUI:
 
             msg.preamble = 'Multipart massage.\n'
 
-            #############################################################
+        #############################################################
 
             html = """\
             <html>
@@ -364,7 +370,7 @@ class GUI:
             status = status.replace("</strong>", "")
             status = status.replace("</p>", "")
 
-            self.text_running = status + "\n Tests complete, full report has been emailed"
+            self.text_running = status + "\n Tests complete, full report has been emailed \n Close this window or the console window to end program"
             self.label_text_running.set(self.text_running)
 
 root = tk.Tk()
