@@ -62,7 +62,7 @@ class Kronos_TestCase(unittest.TestCase):
 
         print("Running test...")
 
-        credentials_file = 'flash_config.txt'
+        credentials_file = os.getcwd() + '\\flash_config.txt'
 
         user = Conf_Reader.get_value(credentials_file, 'KRONOS_LOGIN_USER')
         password = Conf_Reader.get_value(credentials_file, 'KRONOS_LOGIN_PASSWORD')
@@ -96,7 +96,7 @@ class Kronos_TestCase(unittest.TestCase):
             cur_time = time.strftime("%I_%M_%S")
             date_time = cur_date + " " + cur_time
 
-        self.driver.save_screenshot(os.getcwd() + "/kronos_signin" + date_time + ".png")
+        self.driver.save_screenshot(os.getcwd() + "\\Kronos_Screenshots\\kronos_signin" + date_time + ".png")
 
         if test_pass == False:
             print("Timed out trying to confirm page name / Could not confirm flash loaded")

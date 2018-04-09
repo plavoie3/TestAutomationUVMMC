@@ -1,10 +1,15 @@
-from selenium import webdriver
-from selenium.webdriver.support import expected_conditions as EC
-import unittest
+import os
 import time
+import unittest
 from __builtin__ import classmethod
+
+from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+
+import Conf_Reader
+
 
 # ## Check download folder size (# of files) before any files are downloaded by test ##
 #
@@ -20,23 +25,27 @@ class Teletracking_TestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
 
+        # Initialize Firefox browser profile
         profile = webdriver.FirefoxProfile()
 
         # Enable Flash
         profile.set_preference("plugin.state.flash", 2);
 
 
+        # Configure browser profile
         profile.set_preference("network.automatic-ntlm-auth.trusted-uris", "http://accweb02-pxy,http://tpkweb02-pxy,"
                                                                            "http://accweb01-pxy,http://tpkweb01-pxy,."
                                                                            "fahc.fletcherallen.org,.fahc.org,.fletcherallen.org,"
                                                                            ".uvmhealth.org,.uvmhn.org,.uvmmc.org,.uvmhealth.com,"
                                                                            ".uvmhealth.net,.uvmmedcenter.org,.uvmmedcenter.com,"
                                                                            ".uvmmedcenter.net,.uvmchildrens.org")
-
-        # profile.set_preference("browser.download.dir", path);
+        # Set path for downloads to be saved to
+        profile.set_preference("browser.download.dir", os.getcwd());
         profile.set_preference("browser.download.folderList", 2);
+        # Automatic downloads
         profile.set_preference("browser.helperApps.neverAsk.saveToDisk",
-                               "application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/msword, application/csv,application/excel,application/vnd.msexcel,application/vnd.ms-excel,text/anytext,text/comma-separated-values,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/octet-stream");
+                               "application/vnd.openxmlformats-officedocument.wordprocessingml.document, "
+                               "application/msword, application/csv,application/excel,application/vnd.msexcel,application/vnd.ms-excel,text/anytext,text/comma-separated-values,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/octet-stream");
         profile.set_preference("browser.download.manager.showWhenStarting", False);
         profile.set_preference("browser.helperApps.neverAsk.openFile",
                                "application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/msword, application/csv,application/excel,application/vnd.msexcel,application/vnd.ms-excel,text/anytext,text/comma-separated-values,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/octet-stream");
@@ -70,9 +79,11 @@ class Teletracking_TestCase(unittest.TestCase):
 
         print(self.driver.title)
 
-        #credentials_file = os.getcwd() + '\login.credentials.txt'
-        user = 'testmary' #Conf_Reader.get_value(credentials_file, 'TELETRACKING_LOGIN_USER')
-        password =  1111 #Conf_Reader.get_value(credentials_file, 'TELETRACKING_LOGIN_PASSWORD')
+        credentials_file = os.getcwd() + '\\flash_config.txt'
+        user = Conf_Reader.get_value(credentials_file, 'TELETRACKING_LOGIN_USER')
+        password = Conf_Reader.get_value(credentials_file, 'TELETRACKING_LOGIN_PASSWORD')
+
+
 
 
         username = WebDriverWait(self.driver, 20).until(EC.visibility_of_element_located(
@@ -97,7 +108,7 @@ class Teletracking_TestCase(unittest.TestCase):
             cur_time = time.strftime("%I_%M_%S")
             date_time = cur_date + " " + cur_time
 
-        self.driver.save_screenshot("Screenshots\\Teletracking\\teletracking_signin_" + date_time + ".png")
+        self.driver.save_screenshot(os.getcwd() + "\\Teletracking_Screenshots\\teletracking_signin_" + date_time + ".png")
 
         if test_pass == False:
             print("Timed out trying to confirm page name / Could not confirm flash loaded")
