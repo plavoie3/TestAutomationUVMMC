@@ -5,7 +5,7 @@ block_cipher = None
 
 a = Analysis(['TestRunner_flash.py'],
              pathex=['H:\\MyDocuments\\PyCharmProjects\\Automation'],
-             binaries=[],
+             binaries=[('H:\MyDocuments\PyCharmProjects\Automation\\geckodriver.exe', '.')],
              datas=[('H:\\MyDocuments\\PyCharmProjects\\Automation\\flash_config.txt', '.')],
              hiddenimports=[],
              hookspath=[],
